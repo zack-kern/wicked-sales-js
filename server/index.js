@@ -10,8 +10,20 @@ const app = express();
 
 app.use(staticMiddleware);
 app.use(sessionMiddleware);
-
 app.use(express.json());
+
+app.get('/api/products', (req, res, next) => {
+  const sql = `
+      select "productId", "name", "price", "image", "shortDescription"
+      from "products";
+    `;
+  db.query(sql)
+    .then(result => {
+      res.status(200);
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
 
 app.get('/api/health-check', (req, res, next) => {
   db.query('select \'successfully connected\' as "message"')
