@@ -8,6 +8,9 @@ const sessionMiddleware = require('./session-middleware');
 
 const app = express();
 
+app.use(staticMiddleware);
+app.use(sessionMiddleware);
+
 app.get('/api/products', (req, res, next) => {
   const sql = `
       select "productId", "name", "price", "image", "shortDescription"
@@ -20,9 +23,6 @@ app.get('/api/products', (req, res, next) => {
     })
     .catch(err => next(err));
 });
-
-app.use(staticMiddleware);
-app.use(sessionMiddleware);
 
 app.use(express.json());
 
