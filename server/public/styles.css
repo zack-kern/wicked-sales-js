@@ -1,0 +1,19 @@
+.Header {
+  background-color: rgba(241, 96, 241, 0.596);
+  border: 3px solid rgba(99, 45, 153, 0.575);
+  color: rgb(255, 255, 255);
+}
+.card {
+  border: 3px solid rgba(241, 96, 241, 0.596);
+  background-color: rgba(238, 255, 0, 0.534);
+  width: 30%;
+  height: 45%;
+}
+.card-body {
+  padding-top: 1rem;
+}
+.card-img-top {
+  padding: 2rem 2rem 0rem 2rem;
+  object-fit: contain;
+  max-height: 230px;
+}
