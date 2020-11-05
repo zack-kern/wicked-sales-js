@@ -1,0 +1,21 @@
+.Header {
+  background-color: rgba(211, 154, 211, 0.596);
+  border: 3px solid rgba(99, 45, 153, 0.575);
+}
+.card {
+  border: 3px solid rgba(153, 152, 153, 0.596);
+  background-color: rgba(238, 255, 0, 0.233);
+  width: 32%;
+  height: 45%;
+  -moz-box-shadow: -5px -5px 5px rgba(136, 136, 136, 0.575);
+  -webkit-box-shadow: -5px -5px 5px rgba(136, 136, 136, 0.575);
+  box-shadow: -5px -5px 5px rgba(136, 136, 136, 0.575);
+}
+.card-body {
+  padding: 1rem 1rem 2rem 1rem;
+}
+.card-img-top {
+  padding-top: 2rem;
+  object-fit: fill;
+  max-height: 270px;
+}
