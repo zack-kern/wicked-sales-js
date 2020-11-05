@@ -1,15 +1,23 @@
+body {
+  background: rgb(172,228,210);
+  background: linear-gradient(0deg, rgba(172,228,210,1) 0%, rgba(240,208,140,1) 100%);
+}
 .Header {
-  background-color: rgba(211, 154, 211, 0.596);
-  border: 3px solid rgba(99, 45, 153, 0.575);
+  margin-bottom: 2rem;
+  background-color: rgba(250, 236, 172, 0.945);
+  border-bottom: 5px solid rgba(178, 141, 214, 0.575);
+  -moz-box-shadow: 0 0 10px 5px black, 40px -30px lime, 40px 30px 50px rgb(177, 141, 214), -40px 30px rgba(157, 255, 0, 0.979), -40px -30px 50px blue;
+-webkit-box-shadow: 0 0 10px 5px black, 40px -30px lime, 40px 30px 50px red, -40px 30px rgba(0, 68, 255, 0.815), -40px -30px 50px blue;
+box-shadow: 0 0 10px 5px rgba(77, 160, 119, 0.685), 40px -30px rgba(255, 166, 0, 0.527), 40px 30px 50px rgb(141, 181, 214), -40px 30px rgb(209, 118, 174), -40px -30px 50px blue;
 }
 .card {
-  border: 3px solid rgba(153, 152, 153, 0.596);
-  background-color: rgba(238, 255, 0, 0.233);
+  border: 3px solid rgb(177, 141, 214);
+  background-color: rgba(0, 247, 255, 0.068);
   width: 32%;
   height: 45%;
-  -moz-box-shadow: -5px -5px 5px rgba(136, 136, 136, 0.575);
-  -webkit-box-shadow: -5px -5px 5px rgba(136, 136, 136, 0.575);
-  box-shadow: -5px -5px 5px rgba(136, 136, 136, 0.575);
+  -moz-box-shadow: 0 0 5px 5px rgba(136, 136, 136, 0.575);
+  -webkit-box-shadow: 0 0 5px 5px rgba(136, 136, 136, 0.575);
+  box-shadow: 0 0 5px 5px rgba(151, 116, 173, 0.596);
 }
 .card-body {
   padding: 1rem 1rem 2rem 1rem;
