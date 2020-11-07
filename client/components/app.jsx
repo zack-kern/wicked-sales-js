@@ -1,14 +1,38 @@
 import React from 'react';
 import Header from './header';
+import ProductDetails from './product-details';
 import ProductList from './product-list';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+    this.setView = this.setView.bind(this);
+    this.clicky = this.clicky.bind(this);
     this.state = {
       message: null,
-      isLoading: true
+      isLoading: true,
+      view: {
+        name: 'catalog',
+        params: {}
+      }
     };
+  }
+
+  setView(params, name) {
+    this.setState({
+      view: {
+        name: 'details',
+        params: params
+      }
+    });
+    if (name === 'catalog') {
+      this.setState({
+        view: {
+          name: 'catalog',
+          params: params
+        }
+      });
+    }
   }
 
   componentDidMount() {
@@ -19,14 +43,29 @@ export default class App extends React.Component {
       .finally(() => this.setState({ isLoading: false }));
   }
 
+  clicky(params) {
+    this.setView(params);
+  }
+
   render() {
-    return (
-      <div className="container">
-        <div className="row"><Header></Header></div>
-        <div className="row">
-          <ProductList></ProductList>
+    if (this.state.view.name === 'details') {
+      return (
+        <div className="container">
+          <div className="row"><Header></Header></div>
+          <div className="row">
+            <ProductDetails params={this.state.view.params} setView={this.setView}></ProductDetails>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="container">
+          <div className="row"><Header></Header></div>
+          <div className="row">
+            <ProductList clicky={this.clicky}></ProductList>
+          </div>
+        </div>
+      );
+    }
   }
 }

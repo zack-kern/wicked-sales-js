@@ -32,7 +32,9 @@ class ProductList extends React.Component {
               image={product.image}
               title={product.name}
               price={product.price}
+              productId={product.productId}
               shortDes={product.shortDescription}
+              clicky={this.props.clicky}
             >
             </ProductListItem>;
           })

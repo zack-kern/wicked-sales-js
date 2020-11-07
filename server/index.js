@@ -25,6 +25,21 @@ app.get('/api/products', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/products/:productId', (req, res, next) => {
+  const prodId = parseInt(req.params.productId);
+  const sql = `
+    select *
+    from "products"
+    where "productId" = ${prodId}
+  `;
+  db.query(sql)
+    .then(result => {
+      res.status(200);
+      res.json(result.rows[0]);
+    })
+    .catch(err => next(err));
+});
+
 app.get('/api/health-check', (req, res, next) => {
   db.query('select \'successfully connected\' as "message"')
     .then(result => res.json(result.rows[0]))
