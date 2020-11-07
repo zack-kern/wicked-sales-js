@@ -1,22 +1,18 @@
 body {
-  background: rgb(172,228,210);
-  background: linear-gradient(0deg, rgba(172,228,210,1) 0%, rgba(240,208,140,1) 100%);
+  background: rgb(237, 238, 255);
+  /* background: linear-gradient(0deg, rgba(172,228,210,1) 0%, rgba(240,208,140,1) 100%); */
 }
 .Header {
   margin-bottom: 2rem;
-  background-color: rgba(250, 236, 172, 0.945);
+  background-color: rgb(255, 255, 255);
   border-bottom: 5px solid rgba(178, 141, 214, 0.575);
-  -moz-box-shadow: 0 0 10px 5px black, 40px -30px lime, 40px 30px 50px rgb(177, 141, 214), -40px 30px rgba(157, 255, 0, 0.979), -40px -30px 50px blue;
--webkit-box-shadow: 0 0 10px 5px black, 40px -30px lime, 40px 30px 50px red, -40px 30px rgba(0, 68, 255, 0.815), -40px -30px 50px blue;
-box-shadow: 0 0 10px 5px rgba(77, 160, 119, 0.685), 40px -30px rgba(255, 166, 0, 0.527), 40px 30px 50px rgb(141, 181, 214), -40px 30px rgb(209, 118, 174), -40px -30px 50px blue;
+  box-shadow: 0 0 10px 5px rgba(77, 160, 119, 0.685), 40px -30px rgba(255, 166, 0, 0.527), 40px 30px 50px rgb(141, 181, 214), -40px 30px rgb(209, 118, 174), -40px -30px 50px blue;
 }
 .card {
   border: 3px solid rgb(177, 141, 214);
-  background-color: rgba(0, 247, 255, 0.068);
+  background-color: rgb(255, 255, 255);
   width: 32%;
   height: 45%;
-  -moz-box-shadow: 0 0 5px 5px rgba(136, 136, 136, 0.575);
-  -webkit-box-shadow: 0 0 5px 5px rgba(136, 136, 136, 0.575);
   box-shadow: 0 0 5px 5px rgba(151, 116, 173, 0.596);
 }
 .card-body {
@@ -26,4 +22,31 @@ box-shadow: 0 0 10px 5px rgba(77, 160, 119, 0.685), 40px -30px rgba(255, 166, 0,
   padding-top: 2rem;
   object-fit: fill;
   max-height: 270px;
+}
+.details-container{
+  margin-top: 1rem;
+  background-color: white;
+  border: 2px solid rgba(177, 141, 214, 0.911);
+  padding: 1rem;
+}
+.back-button {
+  background: transparent;
+  box-shadow: 0px 0px 0px transparent;
+  border: 0px solid transparent;
+  text-shadow: 0px 0px 0px transparent;
+  margin: 0.5rem 1rem 1rem 2rem;
+}
+.card-detail-img {
+  max-width: 40%;
+  object-fit: fill;
+  max-height: 300px;
+}
+.card-detail-text{
+  max-width: 50%;
+}
+.card-detail-text * {
+  margin-bottom: 1rem;
+}
+.details-row {
+  margin: 1rem;
 }
