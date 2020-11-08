@@ -1,11 +1,9 @@
 require('dotenv/config');
 const express = require('express');
-
 const db = require('./database');
 const ClientError = require('./client-error');
 const staticMiddleware = require('./static-middleware');
 const sessionMiddleware = require('./session-middleware');
-
 const app = express();
 
 app.use(staticMiddleware);
@@ -38,6 +36,35 @@ app.get('/api/products/:productId', (req, res, next) => {
       res.json(result.rows[0]);
     })
     .catch(err => next(err));
+});
+
+app.get('/api/cart', (req, res, next) => {
+  const sql = `
+    select *
+    from "carts"
+  `;
+  db.query(sql)
+    .then(result => {
+      res.json([{}]);
+    })
+    .catch(err => next(err));
+});
+
+app.post('/api/cart/:productId', (req, res, next) => {
+  if (parseInt(req.params.productId)) {
+    const sql = `
+      select "price"
+      from "product"
+      where "productId" = ${req.params.productId}
+    `;
+    db.query(sql)
+      .then()
+      .then()
+      .then()
+      .catch(err => next(err));
+  } else {
+    res.status(400).json({ error: 'pick a real product id and try again please' });
+  }
 });
 
 app.get('/api/health-check', (req, res, next) => {
