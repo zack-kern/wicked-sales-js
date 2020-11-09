@@ -45,7 +45,25 @@ app.get('/api/cart', (req, res, next) => {
   `;
   db.query(sql)
     .then(result => {
-      res.json([{}]);
+      if (!req.session.cartId) {
+        res.json([{}]);
+      } else {
+        const sql9000 = `
+        select "c"."cartItemId",
+                "c"."price",
+                "p"."productId",
+                "p"."image",
+                "p"."name",
+                "p"."shortDescription"
+        from "cartItems" as "c"
+        join "products" as "p" using ("productId")
+        where "c"."cartId" = ${req.session.cartId}
+        `;
+        db.query(sql9000)
+          .then(rez => {
+            res.json(rez.rows);
+          });
+      }
     })
     .catch(err => next(err));
 });
@@ -54,13 +72,69 @@ app.post('/api/cart/:productId', (req, res, next) => {
   if (parseInt(req.params.productId)) {
     const sql = `
       select "price"
-      from "product"
+      from "products"
       where "productId" = ${req.params.productId}
     `;
     db.query(sql)
-      .then()
-      .then()
-      .then()
+      .then(result => {
+        if (req.session.cartId) {
+          const sql2 = `
+            select *
+            from "carts"
+            where "cartId" = ${req.session.cartId}
+          `;
+          return db.query(sql2)
+            .then(ress => {
+              const obj = {
+                cartId: ress.rows[0].cartId,
+                price: result.rows[0].price
+              };
+              return (obj);
+            });
+        } else if (!req.session.cartId && result.rows.length !== 0) {
+          const sql2 = `
+            insert into "carts" ("cartId", "createdAt")
+            values (default, default)
+            returning "cartId"
+          `;
+          return db.query(sql2)
+            .then(ress => {
+              const obj = {
+                cartId: ress.rows[0].cartId,
+                price: result.rows[0].price
+              };
+              return (obj);
+            });
+        } else {
+          res.status(400).json({ error: 'no rows were returned, homie :(' });
+        }
+      })
+      .then(rez => {
+        req.session.cartId = rez.cartId;
+        const sql3 = `
+          insert into "cartItems" ("cartId", "productId", "price")
+          values (${rez.cartId}, ${req.params.productId}, ${rez.price})
+          returning "cartItemId"
+        `;
+        return db.query(sql3);
+      })
+      .then(ressy => {
+        const sql4 = `
+          select "c"."cartItemId",
+                "c"."price",
+                "p"."productId",
+                "p"."image",
+                "p"."name",
+                "p"."shortDescription"
+            from "cartItems" as "c"
+            join "products" as "p" using ("productId")
+          where "c"."cartItemId" = ${ressy.rows[0].cartItemId}
+        `;
+        return db.query(sql4)
+          .then(rezz => {
+            res.status(201).json(rezz.rows[0]);
+          });
+      })
       .catch(err => next(err));
   } else {
     res.status(400).json({ error: 'pick a real product id and try again please' });
