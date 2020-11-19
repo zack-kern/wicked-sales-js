@@ -40,7 +40,7 @@ app.get('/api/products/:productId', (req, res, next) => {
 
 app.get('/api/cart', (req, res, next) => {
   if (!req.session.cartId) {
-    res.status(200).json([{}]);
+    res.status(200).json([]);
   } else {
     const value = [req.session.cartId];
     const sql = `
@@ -56,9 +56,8 @@ app.get('/api/cart', (req, res, next) => {
     `;
     db.query(sql, value)
       .then(result => {
-        JSON.stringify(result);
-        res.status(202);
-        res.json(result.rows[0]);
+        res.status(200);
+        res.json(result.rows);
       })
       .catch(err => next(err));
   }
@@ -74,28 +73,32 @@ app.post('/api/cart', (req, res, next) => {
     `;
     db.query(sql, myVal)
       .then(result => {
-        if (req.session.cartId) {
-          const obj = {
-            cartId: req.session.cartId,
-            price: result.rows[0].price
-          };
-          return (obj);
-        } else if (!req.session.cartId && result.rows.length !== 0) {
-          const sql2 = `
+        if (result.rows[0]) {
+          if (req.session.cartId) {
+            const obj = {
+              cartId: req.session.cartId,
+              price: result.rows[0].price
+            };
+            return (obj);
+          } else if (!req.session.cartId && result.rows.length !== 0) {
+            const sql2 = `
             insert into "carts" ("cartId", "createdAt")
             values (default, default)
             returning "cartId"
           `;
-          return db.query(sql2)
-            .then(ress => {
-              const obj = {
-                cartId: ress.rows[0].cartId,
-                price: result.rows[0].price
-              };
-              return (obj);
-            });
+            return db.query(sql2)
+              .then(ress => {
+                const obj = {
+                  cartId: ress.rows[0].cartId,
+                  price: result.rows[0].price
+                };
+                return (obj);
+              });
+          } else {
+            throw new ClientError('couldnt get a price for that productId...', 400);
+          }
         } else {
-          next(new ClientError('couldnt get a price for that productId...', 400));
+          throw new ClientError('couldnt get product with that ID', 400);
         }
       })
       .then(rez => {
