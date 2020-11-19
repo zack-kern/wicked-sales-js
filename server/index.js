@@ -6,13 +6,9 @@ const staticMiddleware = require('./static-middleware');
 const sessionMiddleware = require('./session-middleware');
 const app = express();
 
-app.use(staticMiddleware);
-app.use(sessionMiddleware);
-app.use(express.json());
-
 app.get('/api/products', (req, res, next) => {
   const sql = `
-      select "productId", "name", "price", "image", "shortDescription"
+      select *
       from "products";
     `;
   db.query(sql)
@@ -22,6 +18,10 @@ app.get('/api/products', (req, res, next) => {
     })
     .catch(err => next(err));
 });
+
+app.use(staticMiddleware);
+app.use(sessionMiddleware);
+app.use(express.json());
 
 app.get('/api/products/:productId', (req, res, next) => {
   const prodId = parseInt(req.params.productId);
@@ -39,16 +39,11 @@ app.get('/api/products/:productId', (req, res, next) => {
 });
 
 app.get('/api/cart', (req, res, next) => {
-  const sql = `
-    select *
-    from "carts"
-  `;
-  db.query(sql)
-    .then(result => {
-      if (!req.session.cartId) {
-        res.json([{}]);
-      } else {
-        const sql9000 = `
+  if (!req.session.cartId) {
+    res.status(200).json([{}]);
+  } else {
+    const value = [req.session.cartId];
+    const sql = `
         select "c"."cartItemId",
                 "c"."price",
                 "p"."productId",
@@ -57,40 +52,34 @@ app.get('/api/cart', (req, res, next) => {
                 "p"."shortDescription"
         from "cartItems" as "c"
         join "products" as "p" using ("productId")
-        where "c"."cartId" = ${req.session.cartId}
-        `;
-        db.query(sql9000)
-          .then(rez => {
-            res.json(rez.rows);
-          });
-      }
-    })
-    .catch(err => next(err));
+        where "c"."cartId" = $1
+    `;
+    db.query(sql, value)
+      .then(result => {
+        JSON.stringify(result);
+        res.status(202);
+        res.json(result.rows[0]);
+      })
+      .catch(err => next(err));
+  }
 });
 
-app.post('/api/cart/:productId', (req, res, next) => {
-  if (parseInt(req.params.productId)) {
+app.post('/api/cart', (req, res, next) => {
+  if (parseInt(req.body.productId)) {
+    const myVal = [req.body.productId];
     const sql = `
       select "price"
       from "products"
-      where "productId" = ${req.params.productId}
+      where "productId" = $1
     `;
-    db.query(sql)
+    db.query(sql, myVal)
       .then(result => {
         if (req.session.cartId) {
-          const sql2 = `
-            select *
-            from "carts"
-            where "cartId" = ${req.session.cartId}
-          `;
-          return db.query(sql2)
-            .then(ress => {
-              const obj = {
-                cartId: ress.rows[0].cartId,
-                price: result.rows[0].price
-              };
-              return (obj);
-            });
+          const obj = {
+            cartId: req.session.cartId,
+            price: result.rows[0].price
+          };
+          return (obj);
         } else if (!req.session.cartId && result.rows.length !== 0) {
           const sql2 = `
             insert into "carts" ("cartId", "createdAt")
@@ -106,17 +95,18 @@ app.post('/api/cart/:productId', (req, res, next) => {
               return (obj);
             });
         } else {
-          res.status(400).json({ error: 'no rows were returned, homie :(' });
+          next(new ClientError('couldnt get a price for that productId...', 400));
         }
       })
       .then(rez => {
         req.session.cartId = rez.cartId;
+        const val = [rez.cartId, req.body.productId, rez.price];
         const sql3 = `
           insert into "cartItems" ("cartId", "productId", "price")
-          values (${rez.cartId}, ${req.params.productId}, ${rez.price})
+          values ($1, $2, $3)
           returning "cartItemId"
         `;
-        return db.query(sql3);
+        return db.query(sql3, val);
       })
       .then(ressy => {
         const sql4 = `
@@ -147,10 +137,6 @@ app.get('/api/health-check', (req, res, next) => {
     .catch(err => next(err));
 });
 
-app.use('/api', (req, res, next) => {
-  next(new ClientError(`cannot ${req.method} ${req.originalUrl}`, 404));
-});
-
 app.use((err, req, res, next) => {
   if (err instanceof ClientError) {
     res.status(err.status).json({ error: err.message });
@@ -165,4 +151,8 @@ app.use((err, req, res, next) => {
 app.listen(process.env.PORT, () => {
   // eslint-disable-next-line no-console
   console.log('Listening on port', process.env.PORT);
+});
+
+app.use('/api', (req, res, next) => {
+  next(new ClientError(`cannot ${req.method} ${req.originalUrl}`, 404));
 });
